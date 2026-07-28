@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #0F172A; /* Slate 900 */
+  --color-ink-soft: #64748B; /* Slate 500 */
+  --color-paper: #F8FAFC; /* Slate 50 */
+  --color-paper-card: #FFFFFF;
+  --color-line: #E2E8F0; /* Slate 200 */
+  --color-line-strong: #CBD5E1; /* Slate 300 */
+  
+  /* Primary Brand - Elegant Blue/Indigo */
+  --color-forest: #2563EB; /* Blue 600 */
+  --color-forest-bg: #EFF6FF; /* Blue 50 */
+  
+  /* Secondary / Status */
+  --color-brick: #E11D48; /* Rose 600 */
+  --color-brick-bg: #FFF1F2; /* Rose 50 */
+  --color-amber: #D97706; /* Amber 600 */
+  --color-amber-bg: #FFFBEB; /* Amber 50 */
+  --color-stone: #94A3B8; /* Slate 400 */
+  --color-stone-dark: #475569; /* Slate 600 */
+  --color-stone-bg: #F1F5F9; /* Slate 100 */
+  --color-gold: #CA8A04; /* Yellow 600 */
+  --color-focus: #3B82F6; /* Blue 500 */
+
+  --radius-panel: 16px;
+  --shadow-panel: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-float: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  --font-serif: "Source Serif 4", serif;
+  --font-sans: var(--font-inter), sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+}
+
+@layer base {
+  :root {
+    --ink: #0F172A;
+    --ink-soft: #64748B;
+    --paper: #F8FAFC;
+    --paper-card: #FFFFFF;
+    --line: #E2E8F0;
+    --line-strong: #CBD5E1;
+    --forest: #2563EB;
+    --forest-bg: #EFF6FF;
+    --brick: #E11D48;
+    --brick-bg: #FFF1F2;
+    --amber: #D97706;
+    --amber-bg: #FFFBEB;
+    --stone: #94A3B8;
+    --stone-dark: #475569;
+    --stone-bg: #F1F5F9;
+    --gold: #CA8A04;
+    --focus: #3B82F6;
+  }
+
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+  .app-shell {
+    @apply max-w-[1360px] mx-auto px-4 md:px-8 pt-[28px] pb-[80px];
+  }
+  
+  .btn {
+    @apply font-semibold text-[0.85rem] py-2 px-4 rounded-lg border border-line-strong bg-white text-ink shadow-sm transition-all duration-200 cursor-pointer flex items-center justify-center gap-2;
+  }
+  
+  .btn:hover:not(:disabled) {
+    @apply bg-slate-50 border-slate-300 shadow-md -translate-y-[1px];
+  }
+
+  .btn:active:not(:disabled) {
+    @apply translate-y-[0px] shadow-sm;
+  }
+  
+  .btn:disabled {
+    @apply opacity-50 cursor-not-allowed bg-slate-50 text-slate-400 border-slate-200 shadow-none;
+  }
+  
+  .btn-primary {
+    @apply bg-forest border-forest text-white shadow-sm;
+  }
+  
+  .btn-primary:hover:not(:disabled) {
+    @apply bg-blue-700 border-blue-700 shadow-md;
+  }
+  
+  .btn-ghost {
+    @apply border-transparent bg-transparent text-ink-soft shadow-none;
+  }
+
+  .btn-ghost:hover:not(:disabled) {
+    @apply bg-slate-100 text-ink shadow-none translate-y-0;
+  }
+
+  .btn-danger {
+    @apply text-white border-brick bg-brick shadow-sm;
+  }
+
+  .btn-danger:hover:not(:disabled) {
+    @apply bg-rose-700 border-rose-700 text-white shadow-md;
+  }
+
+  select,
+  input[type="text"],
+  input[type="password"],
+  input[type="search"],
+  input[type="date"],
+  input[type="datetime-local"],
+  textarea {
+    @apply text-[0.875rem] py-2 px-3 border border-slate-300 rounded-lg bg-white text-ink font-sans transition-all duration-200 placeholder-slate-400;
+  }
+
+  select:hover:not(:disabled),
+  input:hover:not(:disabled),
+  textarea:hover:not(:disabled) {
+    @apply border-slate-400;
+  }
+
+  select:focus,
+  input:focus,
+  textarea:focus {
+    @apply outline-none border-focus ring-4 ring-focus/15 bg-white;
+  }
+
+  /* Form Labels */
+  label {
+    @apply block text-[0.7rem] uppercase tracking-wider text-slate-500 mb-1.5 font-bold;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-white p-6 rounded-2xl shadow-[0_1px_3px_0_rgb(0,0,0,0.1),0_1px_2px_-1px_rgb(0,0,0,0.1)] border border-slate-200 transition-all;
+  }
+}

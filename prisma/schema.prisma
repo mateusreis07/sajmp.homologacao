@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Tenant {
+  id        String          @id @default(cuid())
+  nome      String          @unique
+  slug      String          @unique
+  usuarios  User[]
+  roteiros  RoteiroVersao[]
+  testItems TestItem[]
+  versionReports VersionReport[]
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+}
+
+model User {
+  id        String   @id @default(cuid())
+  nome      String
+  username  String   @unique
+  senha     String
+  role      String   @default("ANALISTA") // "SUPER_ADMIN", "ADMIN", "ANALISTA"
+  tenantId  String?
+  tenant    Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RoteiroVersao {
+  id          Int        @id @default(autoincrement())
+  titulo      String     @default("Roteiro de Homologação SAJ5")
+  versao      String
+  cliente     String     @default("")
+  dataInicio  DateTime?
+  dataFim     DateTime?
+  importadoEm DateTime   @default(now())
+  status      String     @default("EM_ANDAMENTO") // "EM_ANDAMENTO", "CONCLUIDO"
+  versaoAnteriorId Int?
+  tenantId    String
+  tenant      Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  items       TestItem[]
+}
+
+model TestItem {
+  id              Int               @id @default(autoincrement())
+  numeroRoteiro   Int
+  sistema         String
+  modulo          String
+  tela            String
+  cenario         String
+  requisitos      String            @default("")
+  responsavel     String            @default("")
+  status          String            @default("PENDENTE")
+  chamado         String            @default("")
+  statusChamado   String            @default("")
+  observacao      String            @default("")
+  subsidio        String            @default("")
+  arquivado       Boolean           @default(false)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  roteiroVersaoId Int
+  roteiroVersao   RoteiroVersao     @relation(fields: [roteiroVersaoId], references: [id])
+  tenantId        String
+  tenant          Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  history         TestItemHistory[]
+
+  @@unique([numeroRoteiro, roteiroVersaoId, tenantId])
+}
+
+model TestItemHistory {
+  id         Int      @id @default(autoincrement())
+  testItemId Int
+  testItem   TestItem @relation(fields: [testItemId], references: [id], onDelete: Cascade)
+  timestamp  DateTime @default(now())
+  usuario    String
+  descricao  String
+}
+
+model VersionReport {
+  id        Int      @id @default(autoincrement())
+  
+  // Dados Gerais
+  sistema               String
+  versaoAnterior        String
+  versaoAtual           String
+  dataAtualizacao       DateTime
+  ambiente              String       // "PRODUCAO" | "HOMOLOGACAO"
+  responsavel           String
+  statusAtualizacao     String       // "SUCESSO" | "PARCIAL" | "FALHA"
+  
+  // Indicadores Operacionais
+  atendimentosEncerrados      String  @default("")
+  atendimentosAbertos         String  @default("")
+  usuariosAfetados            String  @default("")
+  defeitosIdentificados       String  @default("")
+  incidentesCriticos          String  @default("")
+  incidentesMediaBaixa        String  @default("")
+  tempoIndisponibilidade      String  @default("")
+  tempoEstabilizacao          String  @default("")
+  
+  // Observações
+  melhorias             String  @default("")
+  problemas             String  @default("")
+  acoesAndamento        String  @default("")
+  
+  // Relacionamentos
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
