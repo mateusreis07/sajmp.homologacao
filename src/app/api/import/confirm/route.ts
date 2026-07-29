@@ -1,8 +1,10 @@
-﻿import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
 import { RawParsedItem } from '@/lib/diff-engine'
 import { auth } from '@/auth'
+
+export const dynamic = 'force-dynamic'
 
 function parseStatus(raw: string): string {
   if (raw === 'FUNCIONA') return 'FUNCIONA'
@@ -179,3 +181,4 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Erro ao confirmar importacao', details: String(error) }, { status: 500 })
   }
 }
+

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { auth } from '@/auth'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
   const session = await auth()
   if (!session?.user) {
@@ -103,3 +105,5 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Erro ao buscar itens' }, { status: 500 })
   }
 }
+
+

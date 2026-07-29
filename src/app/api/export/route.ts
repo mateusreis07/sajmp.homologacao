@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { auth } from '@/auth'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
   try {
     const session = await auth()
@@ -88,3 +90,5 @@ export async function GET(request: NextRequest) {
     return new NextResponse('Erro ao exportar CSV', { status: 500 })
   }
 }
+
+

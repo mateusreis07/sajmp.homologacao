@@ -4,6 +4,8 @@ import { parseCSV, decodeBuffer } from '@/lib/csv-parser'
 import { rowsToItems, computeDiff } from '@/lib/diff-engine'
 import { auth } from '@/auth'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: NextRequest) {
   try {
     const session = await auth()
@@ -87,3 +89,5 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Erro ao analisar CSV', detail: String(error) }, { status: 500 })
   }
 }
+
+

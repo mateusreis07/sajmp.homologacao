@@ -3,6 +3,8 @@ import prisma from '@/lib/prisma'
 import { format } from 'date-fns'
 import { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, HeadingLevel, WidthType, BorderStyle } from 'docx'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
 

@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { auth } from '@/auth'
 import prisma from '@/lib/prisma'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(req: Request) {
   const session = await auth()
   if (!session?.user?.tenantId && session?.user?.role !== 'SUPER_ADMIN') {
@@ -71,3 +73,5 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
+
+

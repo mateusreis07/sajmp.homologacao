@@ -3,6 +3,8 @@ import { auth } from '@/auth'
 import prisma from '@/lib/prisma'
 import defaultItems from '@/lib/data/default-items.json'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(req: Request) {
   try {
     const session = await auth()
