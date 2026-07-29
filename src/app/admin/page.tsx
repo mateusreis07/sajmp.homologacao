@@ -10,7 +10,15 @@ export default async function AdminPage() {
       _count: {
         select: {
           usuarios: true,
-          testItems: true,
+        }
+      },
+      roteiros: {
+        orderBy: { id: 'desc' },
+        take: 1,
+        select: {
+          _count: {
+            select: { items: true }
+          }
         }
       }
     },
@@ -49,7 +57,7 @@ export default async function AdminPage() {
                   <td className="p-3 font-medium">{t.nome}</td>
                   <td className="p-3 font-mono text-xs">{t.slug}</td>
                   <td className="p-3 text-center">{t._count.usuarios}</td>
-                  <td className="p-3 text-center">{t._count.testItems}</td>
+                  <td className="p-3 text-center">{t.roteiros?.[0]?._count?.items || 0}</td>
                   <td className="p-3">
                     <AdminTenantActions tenant={{ id: t.id, nome: t.nome, slug: t.slug }} />
                   </td>
