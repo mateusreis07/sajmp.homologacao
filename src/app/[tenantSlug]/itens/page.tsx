@@ -148,9 +148,7 @@ export default function ItensPage({ params }: { params: Promise<{ tenantSlug: st
       <div className="bg-white border border-line rounded-[10px] overflow-auto shadow-[0_1px_2px_rgba(22,35,61,0.06),0_4px_14px_rgba(22,35,61,0.07)]">
         <ItemsTable 
           items={items} 
-          onEdit={(id) => {
-            if (versaoStatus !== 'CONCLUIDO') setEditingId(id)
-          }} 
+          onEdit={(id) => setEditingId(id)} 
           onQuickUpdate={versaoStatus !== 'CONCLUIDO' ? handleQuickStatusUpdate : undefined} 
         />
         {items.length === 0 && !loading && (
