@@ -25,6 +25,22 @@ export default function ItensPage({ params }: { params: Promise<{ tenantSlug: st
 
   const [editingId, setEditingId] = useState<number | null>(null)
 
+  const handleQuickStatusUpdate = async (id: number, status: string) => {
+    // Optimistic update for snappy UI
+    setItems((prev: any) => prev.map((item: any) => item.id === id ? { ...item, status } : item))
+    try {
+      const res = await fetch(`/api/items/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      })
+      if (!res.ok) throw new Error('Falha ao atualizar')
+    } catch (e) {
+      console.error(e)
+      fetchItems() // revert on error
+    }
+  }
+
   const fetchItems = useCallback(() => {
     setLoading(true)
     const params = new URLSearchParams()
@@ -118,7 +134,7 @@ export default function ItensPage({ params }: { params: Promise<{ tenantSlug: st
       </div>
 
       <div className="bg-white border border-line rounded-[10px] overflow-auto shadow-[0_1px_2px_rgba(22,35,61,0.06),0_4px_14px_rgba(22,35,61,0.07)]">
-        <ItemsTable items={items} onEdit={(id) => setEditingId(id)} />
+        <ItemsTable items={items} onEdit={(id) => setEditingId(id)} onQuickUpdate={handleQuickStatusUpdate} />
         {items.length === 0 && !loading && (
           <div className="py-12 px-5 text-center text-ink-soft">
             Nenhum item encontrado com esses filtros.

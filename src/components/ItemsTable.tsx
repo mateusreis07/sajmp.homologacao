@@ -5,9 +5,10 @@ import { STATUS_META } from '@/lib/constants'
 interface ItemsTableProps {
   items: any[]
   onEdit: (id: number) => void
+  onQuickUpdate?: (id: number, status: string) => void
 }
 
-export default function ItemsTable({ items, onEdit }: ItemsTableProps) {
+export default function ItemsTable({ items, onEdit, onQuickUpdate }: ItemsTableProps) {
   return (
     <table className="w-full border-collapse text-[0.82rem] min-w-[900px]">
       <thead className="sticky top-0 z-10 bg-white">
@@ -33,7 +34,7 @@ export default function ItemsTable({ items, onEdit }: ItemsTableProps) {
             <tr
               key={i.id}
               onClick={() => onEdit(i.id)}
-              className={`cursor-pointer border-b border-slate-100 hover:bg-slate-50 transition-colors ${
+              className={`group cursor-pointer border-b border-slate-100 hover:bg-slate-50 transition-colors ${
                 i.arquivado ? 'opacity-48' : ''
               }`}
             >
@@ -53,15 +54,33 @@ export default function ItemsTable({ items, onEdit }: ItemsTableProps) {
                 )}
               </td>
               <td className="py-3 px-4 align-top">
-                <div
-                  className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-[0.75rem] font-semibold tracking-wide whitespace-nowrap shadow-sm border"
-                  style={{ backgroundColor: st.color + '15', color: st.color, borderColor: st.color + '30' }}
-                >
+                <div className="flex items-center gap-2">
                   <div
-                    className="w-1.5 h-1.5 rounded-full shrink-0"
-                    style={{ backgroundColor: st.color }}
-                  />
-                  {st.label}
+                    className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-[0.75rem] font-semibold tracking-wide whitespace-nowrap shadow-sm border"
+                    style={{ backgroundColor: st.color + '15', color: st.color, borderColor: st.color + '30' }}
+                  >
+                    <div
+                      className="w-1.5 h-1.5 rounded-full shrink-0"
+                      style={{ backgroundColor: st.color }}
+                    />
+                    {st.label}
+                  </div>
+                  
+                  {/* Quick Action: Mark as FUNCIONA */}
+                  {onQuickUpdate && i.status !== 'FUNCIONA' && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onQuickUpdate(i.id, 'FUNCIONA')
+                      }}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-green-100 rounded-md text-green-600 focus:opacity-100 focus:outline-none"
+                      title="Marcar como Funciona"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </button>
+                  )}
                 </div>
               </td>
               <td className="py-3 px-4 align-top">
