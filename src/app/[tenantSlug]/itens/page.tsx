@@ -35,12 +35,12 @@ export default function ItensPage({ params }: { params: Promise<{ tenantSlug: st
 
   const handleQuickStatusUpdate = async (id: number, status: string) => {
     // Optimistic update for snappy UI
-    setItems((prev: any) => prev.map((item: any) => item.id === id ? { ...item, status } : item))
+    setItems((prev: any) => prev.map((item: any) => item.id === id ? { ...item, status, responsavel: userName.toUpperCase() } : item))
     try {
       const res = await fetch(`/api/items/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status, usuario: userName, tenantId: tenantSlug })
+        body: JSON.stringify({ status, responsavel: userName.toUpperCase(), usuario: userName, tenantId: tenantSlug })
       })
       if (!res.ok) throw new Error('Falha ao atualizar')
     } catch (e) {
