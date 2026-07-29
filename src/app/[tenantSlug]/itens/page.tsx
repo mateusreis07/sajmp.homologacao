@@ -1,12 +1,16 @@
 'use client'
 
 import { useEffect, useState, useCallback, use } from 'react'
+import { useSession } from 'next-auth/react'
 import ItemsTable from '@/components/ItemsTable'
 import ItemDrawer from '@/components/ItemDrawer'
 import { STATUS_META } from '@/lib/constants'
 
 export default function ItensPage({ params }: { params: Promise<{ tenantSlug: string }> }) {
   const { tenantSlug } = use(params)
+  const { data: session } = useSession()
+  const userName = session?.user?.name || session?.user?.username || 'Usuário Rápido'
+  
   const [items, setItems] = useState([])
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
@@ -32,7 +36,7 @@ export default function ItensPage({ params }: { params: Promise<{ tenantSlug: st
       const res = await fetch(`/api/items/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status })
+        body: JSON.stringify({ status, usuario: userName, tenantId: tenantSlug })
       })
       if (!res.ok) throw new Error('Falha ao atualizar')
     } catch (e) {
