@@ -70,7 +70,7 @@ export default function ItemDrawer({ itemId, tenantSlug, onClose }: ItemDrawerPr
       const res = await fetch(`/api/items/${itemId}?tenantId=${tenantSlug}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, usuario: userName, tenantId: tenantSlug })
+        body: JSON.stringify({ ...formData, responsavel: userName.toUpperCase(), usuario: userName, tenantId: tenantSlug })
       })
 
       if (!res.ok) {
