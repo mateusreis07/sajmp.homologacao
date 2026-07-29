@@ -35,17 +35,21 @@ export async function GET(request: NextRequest) {
   const versaoIdParam = searchParams.get('versaoId')
 
   try {
+    let targetVersao = null;
     let targetVersaoId = null;
-    
     if (versaoIdParam) {
       targetVersaoId = parseInt(versaoIdParam);
+      targetVersao = await prisma.roteiroVersao.findUnique({ where: { id: targetVersaoId } });
     } else {
       // Find latest version
       const latestVersion = await prisma.roteiroVersao.findFirst({
         where: { tenantId },
         orderBy: { id: 'desc' }
       });
-      if (latestVersion) targetVersaoId = latestVersion.id;
+      if (latestVersion) {
+        targetVersaoId = latestVersion.id;
+        targetVersao = latestVersion;
+      }
     }
 
     const where: any = { tenantId }
@@ -98,7 +102,8 @@ export async function GET(request: NextRequest) {
       total,
       page,
       pageSize,
-      totalPages: Math.ceil(total / pageSize)
+      totalPages: Math.ceil(total / pageSize),
+      versao: targetVersao
     })
   } catch (error) {
     console.error(error)

@@ -2,12 +2,15 @@
 
 import { useEffect, useState, useCallback, use } from 'react'
 import { useSession } from 'next-auth/react'
+import { useSearchParams } from 'next/navigation'
 import ItemsTable from '@/components/ItemsTable'
 import ItemDrawer from '@/components/ItemDrawer'
 import { STATUS_META } from '@/lib/constants'
 
 export default function ItensPage({ params }: { params: Promise<{ tenantSlug: string }> }) {
   const { tenantSlug } = use(params)
+  const searchParams = useSearchParams()
+  const versaoId = searchParams.get('versaoId')
   const { data: session } = useSession()
   const userName = session?.user?.name || session?.user?.username || 'Usuário Rápido'
   
@@ -16,6 +19,7 @@ export default function ItensPage({ params }: { params: Promise<{ tenantSlug: st
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [loading, setLoading] = useState(true)
+  const [versaoStatus, setVersaoStatus] = useState<string>('')
 
   const [filters, setFilters] = useState({
     sistema: '',
@@ -58,6 +62,7 @@ export default function ItensPage({ params }: { params: Promise<{ tenantSlug: st
     if (filters.somentePendentes) params.set('somentePendentes', 'true')
     if (filters.mostrarArquivados) params.set('mostrarArquivados', 'true')
     params.set('tenantId', tenantSlug)
+    if (versaoId) params.set('versaoId', versaoId)
 
     fetch(`/api/items?${params.toString()}`)
       .then((r) => r.json())
@@ -65,10 +70,13 @@ export default function ItensPage({ params }: { params: Promise<{ tenantSlug: st
         setItems(data.items || [])
         setTotal(data.total || 0)
         setTotalPages(data.totalPages || 1)
+        if (data.versao) {
+          setVersaoStatus(data.versao.status || '')
+        }
         setLoading(false)
       })
       .catch(console.error)
-  }, [page, filters])
+  }, [page, filters, tenantSlug, versaoId])
 
   useEffect(() => {
     fetchItems()
@@ -138,7 +146,13 @@ export default function ItensPage({ params }: { params: Promise<{ tenantSlug: st
       </div>
 
       <div className="bg-white border border-line rounded-[10px] overflow-auto shadow-[0_1px_2px_rgba(22,35,61,0.06),0_4px_14px_rgba(22,35,61,0.07)]">
-        <ItemsTable items={items} onEdit={(id) => setEditingId(id)} onQuickUpdate={handleQuickStatusUpdate} />
+        <ItemsTable 
+          items={items} 
+          onEdit={(id) => {
+            if (versaoStatus !== 'CONCLUIDO') setEditingId(id)
+          }} 
+          onQuickUpdate={versaoStatus !== 'CONCLUIDO' ? handleQuickStatusUpdate : undefined} 
+        />
         {items.length === 0 && !loading && (
           <div className="py-12 px-5 text-center text-ink-soft">
             Nenhum item encontrado com esses filtros.

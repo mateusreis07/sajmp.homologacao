@@ -1,26 +1,32 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useSearchParams } from 'next/navigation'
 import StatCard from '@/components/StatCard'
 import SistemaBreakdown from '@/components/SistemaBreakdown'
 import { STATUS_META } from '@/lib/constants'
 
 export default function DashboardPage() {
   const params = useParams()
+  const searchParams = useSearchParams()
   const tenantSlug = params.tenantSlug as string
+  const versaoId = searchParams.get('versaoId')
   const [stats, setStats] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!tenantSlug) return
-    fetch(`/api/stats?tenantId=${tenantSlug}`)
+    let url = `/api/stats?tenantId=${tenantSlug}`
+    if (versaoId) {
+      url += `&versaoId=${versaoId}`
+    }
+    fetch(url)
       .then((r) => r.json())
       .then((data) => {
         setStats(data)
         setLoading(false)
       })
       .catch(console.error)
-  }, [])
+  }, [tenantSlug, versaoId])
 
   if (loading) {
     return <div className="p-10 text-center text-ink-soft">Carregando painel...</div>
