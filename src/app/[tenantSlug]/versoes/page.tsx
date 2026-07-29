@@ -53,14 +53,14 @@ export default function VersoesPage({ params }: { params: Promise<{ tenantSlug: 
           const forceData = await forceRes.json()
           if (forceData.success) {
             form.reset()
-            fetchVersoes()
+            router.push(`/${tenantSlug}/dashboard?versaoId=${forceData.version.id}`)
           } else {
             alert('Erro ao criar versão: ' + (forceData.error || ''))
           }
         }
       } else if (data.success) {
         form.reset()
-        fetchVersoes()
+        router.push(`/${tenantSlug}/dashboard?versaoId=${data.version.id}`)
       } else {
         alert('Erro ao criar versão: ' + (data.error || ''))
       }
