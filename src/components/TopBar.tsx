@@ -14,6 +14,7 @@ function TopBarContent({ tenant, user }: TopBarProps) {
   const [itemsCount, setItemsCount] = useState(0)
   const [versionLabel, setVersionLabel] = useState('')
   const [versionStatus, setVersionStatus] = useState('')
+  const [activeVersion, setActiveVersion] = useState<{ id: number; versao: string } | null>(null)
   const searchParams = useSearchParams()
   const versaoId = searchParams.get('versaoId')
 
@@ -29,6 +30,11 @@ function TopBarContent({ tenant, user }: TopBarProps) {
     fetch(`/api/versions?tenantId=${tenant.slug}&t=${Date.now()}`)
       .then((r) => r.json())
       .then((versions) => {
+        // Find the active (EM_ANDAMENTO) version regardless of what we're viewing
+        const active = versions.find((v: any) => v.status === 'EM_ANDAMENTO')
+        if (active) setActiveVersion({ id: active.id, versao: active.versao })
+        else setActiveVersion(null)
+
         if (versaoId) {
           const v = versions.find((v: any) => v.id.toString() === versaoId)
           if (v) {
@@ -90,6 +96,17 @@ function TopBarContent({ tenant, user }: TopBarProps) {
         </div>
 
         <div className="flex items-center gap-3">
+          {/* Banner: viewing concluded version but there's an active one */}
+          {versionStatus === 'CONCLUIDO' && activeVersion && (
+            <Link
+              href={`/${tenant.slug}/dashboard?versaoId=${activeVersion.id}`}
+              className="flex items-center gap-1.5 text-xs font-bold text-emerald-100 bg-emerald-500/20 hover:bg-emerald-500/35 border border-emerald-500/40 px-3 py-1.5 rounded-lg transition-all backdrop-blur-sm"
+            >
+              <div className="w-2 h-2 bg-emerald-400 rounded-full shadow-[0_0_6px_rgba(52,211,153,0.8)] animate-pulse shrink-0" />
+              v{activeVersion.versao} em homologação
+            </Link>
+          )}
+
           {/* Encerrar Versão */}
           {versionStatus === 'EM_ANDAMENTO' && versaoId && (
             <button
